@@ -12,6 +12,17 @@ export default function ScrollReveal({
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    // 初期チェック: 既に画面に入っているなら即表示
+    const rect = el.getBoundingClientRect();
+    const inView =
+      rect.top < window.innerHeight && rect.bottom > 0;
+    if (inView) {
+      el.classList.add("visible");
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -20,9 +31,9 @@ export default function ScrollReveal({
           }
         });
       },
-      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" }
     );
-    if (ref.current) observer.observe(ref.current);
+    observer.observe(el);
     return () => observer.disconnect();
   }, []);
 
